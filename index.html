@@ -1,458 +1,380 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="png/00.jpg" type="image/jpg">
-    <title>小助手Ⅱ</title>
-    <style>
-        @keyframes spin {
-    0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(180deg) scale(1.2); }
-    100% { transform: rotate(360deg) scale(1); }
-}
 
-@keyframes pulse {
-    0%, 100% { opacity: 0.8; }
-    50% { opacity: 1; }
-}
 
-    #loader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: white;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: opacity 0.0.5s;
-    }
-
-    .loader-spinner {
-    width: 80px;
-    height: 80px;
-    position: relative;
-    animation: spin 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
-}
-
-.loader-spinner::before,
-.loader-spinner::after {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    border-radius: 50%;
-    border: 3px solid transparent;
-    animation: spin 0.5s linear 1;
-}
-
-.loader-spinner::before {
-    border-top: 4px solid #7f00ff;
-    border-bottom: 4px solid #7f00ff;
-    animation-direction: reverse;
-}
-
-.loader-spinner::after {
-    border-left: 4px solid #2a5dff;
-    border-right: 4px solid #2a5dff;
-    animation-delay: -0.0.5s;
-}
-
-.loader-spinner span {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, #2a5dff, #7f00ff);
-    border-radius: 50%;
-    filter: drop-shadow(0 0 8px rgba(42,93,255,0.5));
-    animation: pulse 1.0.5s ease-in-out infinite;
-}
-
-    :root {
-            --primary-blue: #2a5dff;
-            --warning-orange: #ff6b35;
-            --light-bg: #f8f9fa;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-
-        body {
-            line-height: 1.6;
-            scroll-behavior: smooth;
-        }
-
-        .nav-bar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: linear-gradient(135deg, #2a5dff 20%, #4a8dff 80%);
-            padding: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-            animation: flowGradient 8s ease infinite;
-            background-size: 200% 200%;
-        }
-
-        @keyframes flowGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .nav-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            background: rgba(255,255,255,0.15);
-        }
-
-        .section {
-            padding: 6rem 2rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            color: var(--primary-blue);
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        h2 {
-            color: var(--primary-blue);
-            margin: 2rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #eee;
-        }
-
-        .step-container {
-            display: grid;
-            gap: 1.5rem;
-            counter-reset: step;
-        }
-
-        .step {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            transform: translateZ(0);
-        }
-
-        .step:hover {
-            transform: scale(1.02) translateY(-5px);
-            box-shadow: 0 12px 24px rgba(42,93,255,0.15);
-        }
-
-        .step::before {
-            counter-increment: step;
-            content: counter(step);
-            position: absolute;
-            left: -1rem;
-            top: -1rem;
-            background: linear-gradient(45deg, #2a5dff 0%, #4a8dff 100%);
-            color: white;
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(42,93,255,0.3);
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
-
-        .step:hover::before {
-            transform: rotate(360deg) scale(1.1);
-        }
-
-        .warning {
-            background: #fff3e0;
-            padding: 1rem;
-            border-left: 4px solid var(--warning-orange);
-            margin: 1rem 0;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .warning::before {
-            content: "!";
-            color: var(--warning-orange);
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--primary-blue);
-            color: white;
-            padding: 1rem;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .back-to-top.show {
-            opacity: 1;
-        }
-
-        @media (max-width: 768px) {
+    <!DOCTYPE html>
+    <html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="png/00.jpg" type="image/jpg">
+        <title>小助手</title>
+        <style>
+            :root {
+                --primary-blue: #2a5dff;
+                --warning-orange: #ff6b35;
+                --light-bg: #f8f9fa;
+            }
+    
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Segoe UI', system-ui, sans-serif;
+            }
+    
+            body {
+                line-height: 1.6;
+                scroll-behavior: smooth;
+            }
+    
+            .nav-bar {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                background: linear-gradient(135deg, #2a5dff 20%, #4a8dff 80%);
+                padding: 1rem;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                z-index: 1000;
+                animation: flowGradient 8s ease infinite;
+                background-size: 200% 200%;
+            }
+    
+            @keyframes flowGradient {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+    
             .nav-links {
-                flex-direction: column;
-                text-align: center;
-                gap: 1rem;
+                display: flex;
+                justify-content: center;
+                gap: 2rem;
             }
-            
+    
+            .nav-links a {
+                color: white;
+                text-decoration: none;
+                padding: 0.5rem 1rem;
+                border-radius: 4px;
+                transition: background 0.3s ease;
+            }
+    
+            .nav-links a:hover {
+                background: rgba(255,255,255,0.15);
+            }
+    
             .section {
-                padding-top: 8rem;
+                padding: 6rem 2rem 2rem;
+                max-width: 1200px;
+                margin: 0 auto;
             }
-        }
-    </style>
-</head>
-<body>
-    <div id="loader">
-        <div class="loader-spinner"></div>
-    </div>
-    <nav class="nav-bar">
-        <div class="nav-links">
-            <a href="#process">表单浏览器初始化</a>
-            <a href="#features">开始监控</a>
-            <a href="#batch-url">批量填写URL</a>
-            <a href="#ad-pages">广告页面操作</a>
-            <a href="#software-download">软件下载</a>
-            <a href="#notes">注意事项</a>
-        </div>
-    </nav>
-
-    <main>
-        <section id="process" class="section">
-            <h1>软件使用指南</h1>
-            <h2>表单浏览器初始化</h2>
-            <div class="step-container">
-                <div class="step">
-                    <h3>表单浏览器初始化</h3>
-                    <p>登录后点击主界面功能入口：填表浏览器登录进入页面</p>
-                    <img src="png/01.png" alt="步骤1" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
-                </div>
-                <div class="step">
-                    <h3>浏览器配置</h3>
-                    <p>转到页面勾选「是否重新打开网页」选项，随后点击启动浏览器按钮</p>
-                    <img src="png/02.png" alt="步骤2" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
-                </div>
-                <div class="step">
-                    <h3>浏览器启动</h3>
-                    <p>等待浏览器启动并加载完毕，界面显示完整浏览器框架</p>
-                    <img src="png/03.png" alt="步骤3" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
-                </div>
-                <div class="step">
-                    <h3>功能操作</h3>
-                    <p>依次点击「获取标签页」→「获取框架」按钮，待执行结果日志输出显示框架获取和网页打开成功后，即可进行登录操作</p>
-                    <img src="png/04.png" alt="步骤4" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
-
-                    <p style="color: var(--warning-orange); margin-top: 1rem;">※ 请确保网络连接稳定，页面加载过程请勿进行其他操作</p>
-                </div>
+    
+            h1 {
+                font-size: 2.5rem;
+                color: var(--primary-blue);
+                margin-bottom: 2rem;
+                text-align: center;
+            }
+    
+            h2 {
+                color: var(--primary-blue);
+                margin: 2rem 0;
+                padding-bottom: 0.5rem;
+                border-bottom: 2px solid #eee;
+            }
+    
+            .step-container {
+                display: grid;
+                gap: 1.5rem;
+                counter-reset: step;
+            }
+    
+            .step {
+                background: white;
+                padding: 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                position: relative;
+                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                transform: translateZ(0);
+            }
+    
+            .step:hover {
+                transform: scale(1.02) translateY(-5px);
+                box-shadow: 0 12px 24px rgba(42,93,255,0.15);
+            }
+    
+            .step::before {
+                counter-increment: step;
+                content: counter(step);
+                position: absolute;
+                left: -1rem;
+                top: -1rem;
+                background: linear-gradient(45deg, #2a5dff 0%, #4a8dff 100%);
+                color: white;
+                width: 2.5rem;
+                height: 2.5rem;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(42,93,255,0.3);
+                transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            }
+    
+            .step:hover::before {
+                transform: rotate(360deg) scale(1.1);
+            }
+    
+            .warning {
+                background: #fff3e0;
+                padding: 1rem;
+                border-left: 4px solid var(--warning-orange);
+                margin: 1rem 0;
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+            }
+    
+            .warning::before {
+                content: "!";
+                color: var(--warning-orange);
+                font-weight: bold;
+                font-size: 1.2rem;
+            }
+    
+            .back-to-top {
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                background: var(--primary-blue);
+                color: white;
+                padding: 1rem;
+                border-radius: 50%;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+    
+            .back-to-top.show {
+                opacity: 1;
+            }
+    
+            @media (max-width: 768px) {
+                .nav-links {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 1rem;
+                }
+                
+                .section {
+                    padding-top: 8rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="nav-bar">
+            <div class="nav-links">
+                <a href="#process">表单浏览器初始化</a>
+                <a href="#features">开始监控</a>
+                <a href="#batch-url">批量填写URL</a>
+                <a href="#ad-pages">广告页面操作</a>
+                <a href="#software-download">软件下载</a>
+                <a href="#notes">注意事项</a>
             </div>
-        </section>
-
-        <section id="features" class="section">
-            <h2>开始监控</h2>
-            <div class="warning" style="margin-bottom:2rem;">
-                ※ 进行此操作前请一定确保完成表单浏览器初始化指引流程
-            </div>
-            <div class="step-container">
-                <div class="step">
-                    <h3>浏览器主程序启动</h3>
-                    <p>首先打开vmlogin指纹浏览器主程序，点击启动按钮初始化环境</p>
-                    <img src="png/01/01.png" alt="步骤1" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                </div>
-                <div class="step">
-                    <h3>任务界面配置</h3>
-                    <p>转到我的任务界面，确保页面处于图示状态并勾选「未完成」选项，点击搜索按钮</p>
-                    <img src="png/01/02.png" alt="步骤2" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                </div>
-                <div class="step">
-                    <h3>连接拉取操作</h3>
-                    <p>返回小助手vm浏览器分类页面，点击「批量拉取连接」按钮获取任务链接</p>
-                    <img src="png/01/03.png" alt="步骤3" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                </div>
-                <div class="step">
-                    <h3>监控执行流程</h3>
-                    <p>任务页面完成ID0-30分配后，点击「开始监控」按钮等待详细信息生成</p>
-                    <img src="png/01/04.png" alt="步骤4" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                    <p style="color:var(--warning-orange); margin-top:1rem;">※ 监控过程请保持网络稳定，勿操作其他界面</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="batch-url" class="section">
-    <h2>批量填写第1页URL</h2>
-    <div class="warning" style="margin-bottom:2rem;">
-        ※ 进行此操作前请一定确保完成开始监控版块的指引流程
-    </div>
-    <div class="step-container">
-        <div class="step">
-            <h3>页面加载检查</h3>
-            <p>等待浏览器页面加载完毕如图所示</p>
-            <img src="png/02/01.png" alt="步骤1" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-        </div>
-        <div class="step">
-            <h3>网址刷新操作</h3>
-            <p>确保页面都处于上一个步骤中配图中的样式点击小助手中的刷新网址，点击完毕后地址栏内容改变</p>
-            <img src="png/02/02.png" alt="步骤2" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-        </div>
-        <div class="step">
-            <h3>异常页面处理</h3>
-            <p>如果出现问题页面如无法加载，勾选问题页面对应的浏览器，序号对应任务栏0-9图标</p>
-            <img src="png/02/03.png" alt="步骤3" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-        </div>
-        <div class="step">
-            <h3>网址分配执行</h3>
-            <p>转到填表工具类页面点击分配第一个获取的网址，在弹出的窗口中直接点击确定，如果没有勾选异常页面则无需进行分配随后点击填表_第①个按钮</p>
-            <img src="png/02/04.png" alt="步骤4" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-        </div>
-        <div class="step">
-            <h3>执行结果</h3>
-            <p>点击填表按钮后会依次进行填写网址操作，并且跳过已勾选的问题页面</p>
-            <img src="png/02/05.png" alt="步骤4" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-            <p style="color:var(--warning-orange); margin-top:1rem;">※ 问题页面自行判断,图示只是举例</p>
-        </div>
-    </div>
-</section>
-
-<section id="ad-pages" class="section">
-            <h2>批量进入广告页面</h2>
-            <div class="warning" style="margin-bottom:2rem;">
-                ※ 进行此操作前请一定确保完成开始监控版块的指引流程
-            </div>
-            <div class="step-container">
-                <div class="step">
-                    <h3>首次广告入口</h3>
-                    <p>确保浏览器加载完成,并处于此界面</p>
-                    <img src="png/03/01_2.png" alt="首次广告入口" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                    <p>点击小助手<b>首次进入广告</b>按钮</p>
-                    <img src="png/03/01.png" alt="首次广告按钮" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                </div>
-                <div class="step">
-                    <h3>二次广告入口</h3>
-                    <p>等待页面加载完成如图所示,程序默认进入<b>蓝色方框</b>内的广告界面：</p>
-                    <div class="warning">
-                        <p>蓝色方框: 默认进入的广告页面</p>
-                        <p>红色方框：启用关键词匹配广告</p>
-                        <p>黄色方框：开启多广告页面模式</p>
+        </nav>
+    
+        <main>
+            <section id="process" class="section">
+                <h1>软件使用指南</h1>
+                <h2>表单浏览器初始化</h2>
+                <div class="step-container">
+                    <div class="step">
+                        <h3>表单浏览器初始化</h3>
+                        <p>登录后点击主界面功能入口：填表浏览器登录进入页面</p>
+                        <img src="png/01.png" alt="步骤1" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
                     </div>
-                    <img src="png/03/02_1.png" alt="二次广告加载" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                    <p>点击<b>二次进入广告</b>按钮</p>
-                    <img src="png/03/02.png" alt="二次广告按钮" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                </div>
-                <div class="step">
-                    <h3>可选功能配置</h3>
-                    <p>程序默认进入<b>蓝色方框</b>内的广告界面：</p>
-                    <img src="png/03/03.png" alt="功能配置说明" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                </div>
-                <div class="step">
-                    <h3>广告页面处理</h3>
-                    <p>安装专属浏览器扩展可自动定位文本框：</p>
-                    <img src="png/03/03_1.png" alt="扩展定位" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                    <p>未安装扩展时可手动切换页面快速查找填写页面：</p>
-                    <img src="png/03/03_2.png" alt="手动查找" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                </div>
-                <div class="step">
-                    <h3>表单完成操作</h3>
-                    <p>在填表工具页面点击<b>填表_完成表单</b>按钮：</p>
-                    <img src="png/03/04.png" alt="完成表单" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                    <div class="warning">
-                        <p>系统会自动识别1、2链接填写状态</p>
-                        <p>• 已填写：执行完成操作</p>
-                        <p>• 未填写：自动跳过</p>
+                    <div class="step">
+                        <h3>浏览器配置</h3>
+                        <p>转到页面勾选「是否重新打开网页」选项，随后点击启动浏览器按钮</p>
+                        <img src="png/02.png" alt="步骤2" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
+                    </div>
+                    <div class="step">
+                        <h3>浏览器启动</h3>
+                        <p>等待浏览器启动并加载完毕，界面显示完整浏览器框架</p>
+                        <img src="png/03.png" alt="步骤3" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
+                    </div>
+                    <div class="step">
+                        <h3>功能操作</h3>
+                        <p>依次点击「获取标签页」→「获取框架」按钮，待执行结果日志输出显示框架获取和网页打开成功后，即可进行登录操作</p>
+                        <img src="png/04.png" alt="步骤4" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
+    
+                        <p style="color: var(--warning-orange); margin-top: 1rem;">※ 请确保网络连接稳定，页面加载过程请勿进行其他操作</p>
                     </div>
                 </div>
-            </div>
-        </section>
-        <section id="software-download" class="section">
-            <h2>下载中心</h2>
-            <div class="step-container">
-                <div class="step">
-                    <h3>软件下载</h3>
-                    <p>最新版本客户端下载：<a href="download/小助手2.3.rar" download>点击下载</a></p>
-                    <div class="warning" style="margin-top:1rem;">
-                        ※ 下载后请解压到非系统盘目录使用
+            </section>
+    
+            <section id="features" class="section">
+                <h2>开始监控</h2>
+                <div class="warning" style="margin-bottom:2rem;">
+                    ※ 进行此操作前请一定确保完成表单浏览器初始化指引流程
+                </div>
+                <div class="step-container">
+                    <div class="step">
+                        <h3>浏览器主程序启动</h3>
+                        <p>首先打开vmlogin指纹浏览器主程序，点击启动按钮初始化环境</p>
+                        <img src="png/01/01.png" alt="步骤1" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    </div>
+                    <div class="step">
+                        <h3>任务界面配置</h3>
+                        <p>转到我的任务界面，确保页面处于图示状态并勾选「未完成」选项，点击搜索按钮</p>
+                        <img src="png/01/02.png" alt="步骤2" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    </div>
+                    <div class="step">
+                        <h3>连接拉取操作</h3>
+                        <p>返回小助手vm浏览器分类页面，点击「批量拉取连接」按钮获取任务链接</p>
+                        <img src="png/01/03.png" alt="步骤3" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    </div>
+                    <div class="step">
+                        <h3>监控执行流程</h3>
+                        <p>任务页面完成ID0-30分配后，点击「开始监控」按钮等待详细信息生成</p>
+                        <img src="png/01/04.png" alt="步骤4" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                        <p style="color:var(--warning-orange); margin-top:1rem;">※ 监控过程请保持网络稳定，勿操作其他界面</p>
                     </div>
                 </div>
-                <div class="step">
-                    <h3>扩展下载</h3>
-                    <div class="warning">
-                        ※ 安装前请先关闭浏览器
-                        <p>扩展程序下载：<a href="download/auto-fill-extension.rar" download>点击下载</a></p>
-                    </div>
-                    <a class="cptxt" title="点击复制文字" data-url="--disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-renderer-backgrounding --apppackagename=com.facebook.katana --url-mon=http://m.facebook.com/ http://m.facebook.com/ --load-extension="C:\auto-fill-extension"" href="javascript:void(0)">点击复制参数</a>
-                    <p>解压后放在C盘</p>
-                    <p>VMLogin程序>>Ctrl+A全选>>右键>>批量编辑选中配置文件>>自定义启动参数点击勾选填写上方参数>>确认</p>
-                    <img src="png/04/01.png" alt="步骤1" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
-                    <img src="png/04/02.png" alt="步骤2" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
-
+            </section>
+    
+            <section id="batch-url" class="section">
+        <h2>批量填写第1页URL</h2>
+        <div class="warning" style="margin-bottom:2rem;">
+            ※ 进行此操作前请一定确保完成开始监控版块的指引流程
+        </div>
+        <div class="step-container">
+            <div class="step">
+                <h3>页面加载检查</h3>
+                <p>等待浏览器页面加载完毕如图所示</p>
+                <img src="png/02/01.png" alt="步骤1" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            </div>
+            <div class="step">
+                <h3>网址刷新操作</h3>
+                <p>确保页面都处于上一个步骤中配图中的样式点击小助手中的刷新网址，点击完毕后地址栏内容改变</p>
+                <img src="png/02/02.png" alt="步骤2" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            </div>
+            <div class="step">
+                <h3>异常页面处理</h3>
+                <p>如果出现问题页面如无法加载，勾选问题页面对应的浏览器，序号对应任务栏0-9图标</p>
+                <img src="png/02/03.png" alt="步骤3" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            </div>
+            <div class="step">
+                <h3>网址分配执行</h3>
+                <p>转到填表工具类页面点击分配第一个获取的网址，在弹出的窗口中直接点击确定，如果没有勾选异常页面则无需进行分配随后点击填表_第①个按钮</p>
+                <img src="png/02/04.png" alt="步骤4" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+            </div>
+            <div class="step">
+                <h3>执行结果</h3>
+                <p>点击填表按钮后会依次进行填写网址操作，并且跳过已勾选的问题页面</p>
+                <img src="png/02/05.png" alt="步骤4" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                <p style="color:var(--warning-orange); margin-top:1rem;">※ 问题页面自行判断,图示只是举例</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="ad-pages" class="section">
+                <h2>批量进入广告页面</h2>
+                <div class="warning" style="margin-bottom:2rem;">
+                    ※ 进行此操作前请一定确保完成开始监控版块的指引流程
                 </div>
-            </div>
-        </section>
-
-        <section id="notes" class="section">
-            <h2>注意事项</h2>
-            <div class="warning">
-                没有注意的地方
-            </div>
-            <div class="warning">
-                如不熟悉软件,请严格按照流程操作,避免出现不必要的问题
-            </div>
-        </section>
-    </main>
-
-    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-
-    <script>
-        // 返回顶部按钮显示逻辑
-        window.addEventListener('load', () => {
-        document.getElementById('loader').style.opacity = '0';
-        // 监听动画结束事件
-document.getElementById('loader').addEventListener('animationend', () => {
-    document.getElementById('loader').style.opacity = '0';
-    document.getElementById('loader').style.display = 'none';
-        document.body.style.pointerEvents = 'auto';
-});
-    });
-
-    window.addEventListener('scroll', () => {
-            const btn = document.querySelector('.back-to-top');
-            btn.classList.toggle('show', window.scrollY > 300);
-        });
-    </script>
-</body>
-</html>
+                <div class="step-container">
+                    <div class="step">
+                        <h3>首次广告入口</h3>
+                        <p>确保浏览器加载完成,并处于此界面</p>
+                        <img src="png/03/01_2.png" alt="首次广告入口" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                        <p>点击小助手<b>首次进入广告</b>按钮</p>
+                        <img src="png/03/01.png" alt="首次广告按钮" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    </div>
+                    <div class="step">
+                        <h3>二次广告入口</h3>
+                        <p>等待页面加载完成如图所示,程序默认进入<b>蓝色方框</b>内的广告界面：</p>
+                        <div class="warning">
+                            <p>蓝色方框: 默认进入的广告页面</p>
+                            <p>红色方框：启用关键词匹配广告</p>
+                            <p>黄色方框：开启多广告页面模式</p>
+                        </div>
+                        <img src="png/03/02_1.png" alt="二次广告加载" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                        <p>点击<b>二次进入广告</b>按钮</p>
+                        <img src="png/03/02.png" alt="二次广告按钮" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    </div>
+                    <div class="step">
+                        <h3>可选功能配置</h3>
+                        <p>程序默认进入<b>蓝色方框</b>内的广告界面：</p>
+                        <img src="png/03/03.png" alt="功能配置说明" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    </div>
+                    <div class="step">
+                        <h3>广告页面处理</h3>
+                        <p>安装专属浏览器扩展可自动定位文本框：</p>
+                        <img src="png/03/03_1.png" alt="扩展定位" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                        <p>未安装扩展时可手动切换页面快速查找填写页面：</p>
+                        <img src="png/03/03_2.png" alt="手动查找" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    </div>
+                    <div class="step">
+                        <h3>表单完成操作</h3>
+                        <p>在填表工具页面点击<b>填表_完成表单</b>按钮：</p>
+                        <img src="png/03/04.png" alt="完成表单" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                        <div class="warning">
+                            <p>系统会自动识别1、2链接填写状态</p>
+                            <p>• 已填写：执行完成操作</p>
+                            <p>• 未填写：自动跳过</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="software-download" class="section">
+                <h2>下载中心</h2>
+                <div class="step-container">
+                    <div class="step">
+                        <h3>软件下载</h3>
+                        <p>最新版本客户端下载：<a href="download/小助手2.3.rar" download>点击下载</a></p>
+                        <div class="warning" style="margin-top:1rem;">
+                            ※ 下载后请解压到非系统盘目录使用
+                        </div>
+                    </div>
+                    <div class="step">
+                        <h3>扩展下载</h3>
+                        <div class="warning">
+                            ※ 安装前请先关闭浏览器
+                            <p>扩展程序下载：<a href="download/auto-fill-extension.rar" download>点击下载</a></p>
+                        </div>
+                        <a class="cptxt" title="点击复制文字" data-url="--disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-renderer-backgrounding --apppackagename=com.facebook.katana --url-mon=http://m.facebook.com/ http://m.facebook.com/ --load-extension="C:\auto-fill-extension"" href="javascript:void(0)">点击复制参数</a>
+                        <p>解压后放在C盘</p>
+                        <p>VMLogin程序>>Ctrl+A全选>>右键>>批量编辑选中配置文件>>自定义启动参数点击勾选填写上方参数>>确认</p>
+                        <img src="png/04/01.png" alt="步骤1" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
+                        <img src="png/04/02.png" alt="步骤2" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
+    
+                    </div>
+                </div>
+            </section>
+    
+            <section id="notes" class="section">
+                <h2>注意事项</h2>
+                <div class="warning">
+                    没有注意的地方
+                </div>
+                <div class="warning">
+                    如不熟悉软件,请严格按照流程操作,避免出现不必要的问题
+                </div>
+            </section>
+        </main>
+    
+        <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+    
+        <script>
+            // 返回顶部按钮显示逻辑
+            window.addEventListener('scroll', () => {
+                const btn = document.querySelector('.back-to-top');
+                btn.classList.toggle('show', window.scrollY > 300);
+            });
+        </script>
+    </body>
+    </html>
