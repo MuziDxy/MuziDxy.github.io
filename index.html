@@ -7,35 +7,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="png/000.png" type="image/png/jpg">
     <title>小助手</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-blue: #2a5dff;
+            --primary-dark: #1a3dbb;
+            --primary-light: #eef2ff;
+            --secondary-blue: #4a8dff;
             --warning-orange: #ff6b35;
+            --success-green: #28a745;
             --light-bg: #f8f9fa;
+            --dark-text: #333;
+            --light-text: #f8f9fa;
+            --card-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            --transition-bounce: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, var(--primary-blue) 20%, var(--secondary-blue) 80%);
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
             line-height: 1.6;
+            color: var(--dark-text);
+            background-color: var(--light-bg);
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
 
+        /* 导航栏样式 */
         .nav-bar {
             position: fixed;
             top: 0;
             width: 100%;
-            background: linear-gradient(135deg, #2a5dff 20%, #4a8dff 80%);
-            padding: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: var(--gradient-primary);
+            padding: var(--spacing-sm);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             z-index: 1000;
             animation: flowGradient 8s ease infinite;
             background-size: 200% 200%;
+            transition: all 0.3s var(--transition-smooth);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .nav-bar.scrolled {
+            padding: 0.7rem var(--spacing-sm);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+            background: rgba(42, 93, 255, 0.95);
         }
 
         @keyframes flowGradient {
@@ -47,142 +79,480 @@
         .nav-links {
             display: flex;
             justify-content: center;
-            gap: 2rem;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
             color: white;
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background 0.3s ease;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--border-radius-sm);
+            transition: all 0.3s var(--transition-bounce);
+            position: relative;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 0 0 rgba(255,255,255,0);
+        }
+
+        .nav-links a i {
+            font-size: 1.1em;
+            transition: transform 0.3s var(--transition-bounce);
         }
 
         .nav-links a:hover {
             background: rgba(255,255,255,0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .nav-links a:hover i {
+            transform: scale(1.2);
         }
 
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0.3rem;
+            left: 50%;
+            background-color: white;
+            transition: all 0.4s var(--transition-smooth);
+            transform: translateX(-50%);
+            opacity: 0.8;
+        }
+
+        .nav-links a:hover::after {
+            width: 80%;
+        }
+        
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transform: translateY(100%);
+            transition: transform 0.3s var(--transition-smooth);
+            z-index: -1;
+        }
+        
+        .nav-links a:hover::before {
+            transform: translateY(0);
+        }
+
+        /* 主要内容区域 */
         .section {
-            padding: 6rem 2rem 2rem;
+            padding: 7rem 2.5rem 4rem;
             max-width: 1200px;
             margin: 0 auto;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s var(--transition-smooth);
+            position: relative;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            opacity: 0.5;
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 3rem;
             color: var(--primary-blue);
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             text-align: center;
+            position: relative;
+            padding-bottom: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+            border-radius: 2px;
+            box-shadow: 0 2px 10px rgba(42,93,255,0.3);
         }
 
         h2 {
             color: var(--primary-blue);
-            margin: 2rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #eee;
+            margin: 3rem 0 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            font-size: 2rem;
+            position: relative;
+            font-weight: 600;
+            display: inline-block;
         }
 
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            box-shadow: 0 2px 8px rgba(42,93,255,0.2);
+        }
+
+        /* 步骤卡片样式 */
         .step-container {
             display: grid;
-            gap: 1.5rem;
+            gap: 2.5rem;
             counter-reset: step;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            perspective: 1000px;
         }
 
         .step {
             background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 2.2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--card-shadow);
             position: relative;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.5s var(--transition-smooth);
             transform: translateZ(0);
+            border: 1px solid rgba(0,0,0,0.05);
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
 
         .step:hover {
-            transform: scale(1.02) translateY(-5px);
-            box-shadow: 0 12px 24px rgba(42,93,255,0.15);
+            transform: scale(1.03) translateY(-8px) rotateX(2deg);
+            box-shadow: 0 20px 40px rgba(42,93,255,0.15);
+            border-color: rgba(74,141,255,0.3);
         }
 
         .step::before {
             counter-increment: step;
             content: counter(step);
             position: absolute;
-            left: -1rem;
-            top: -1rem;
-            background: linear-gradient(45deg, #2a5dff 0%, #4a8dff 100%);
+            left: -0.5rem;
+            top: -0.5rem;
             color: white;
-            width: 2.5rem;
-            height: 2.5rem;
+            width: 3rem;
+            height: 3rem;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            box-shadow: 0 4px 12px rgba(42,93,255,0.3);
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            font-size: 1.2rem;
+            background: var(--gradient-primary);
+            box-shadow: 0 5px 15px rgba(42,93,255,0.4);
+            transition: all 0.6s var(--transition-bounce);
+            z-index: 1;
         }
 
         .step:hover::before {
-            transform: rotate(360deg) scale(1.1);
+            transform: rotate(360deg) scale(1.15);
+            box-shadow: 0 8px 20px rgba(42,93,255,0.5);
         }
 
+        .step h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1.2rem;
+            font-size: 1.4rem;
+            padding-left: 1.5rem;
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .step h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 1.5rem;
+            width: 40px;
+            height: 2px;
+            background: var(--primary-light);
+            border-radius: 1px;
+            transition: width 0.3s var(--transition-smooth);
+        }
+        
+        .step:hover h3::after {
+            width: 70%;
+            background: var(--primary-blue);
+        }
+
+        .step p {
+            margin-bottom: 1.2rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        /* 图片样式优化 */
+        .step img {
+            max-width: 90%;
+            margin: 1.5rem auto;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.4s var(--transition-smooth);
+            cursor: zoom-in;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .step img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 12px 30px rgba(42,93,255,0.2);
+        }
+
+        /* 警告提示样式 */
         .warning {
-            background: #fff3e0;
-            padding: 1rem;
+            background: #fff8f0;
+            padding: 1.2rem 1.5rem;
+            border-radius: 8px;
             border-left: 4px solid var(--warning-orange);
-            margin: 1rem 0;
+            margin: 1.5rem 0;
             display: flex;
-            gap: 1rem;
-            align-items: center;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(255,107,53,0.1);
         }
 
         .warning::before {
-            content: "!";
+            content: "\f071";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
             color: var(--warning-orange);
-            font-weight: bold;
             font-size: 1.2rem;
+            margin-right: 1rem;
+            position: absolute;
+            left: -12px;
+            top: -12px;
+            background: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--warning-orange);
         }
 
+        .warning p {
+            margin: 0.3rem 0;
+            padding-left: 1rem;
+        }
+
+        /* 返回顶部按钮 */
         .back-to-top {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
             background: var(--primary-blue);
             color: white;
-            padding: 1rem;
+            width: 3rem;
+            height: 3rem;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transform: translateY(20px);
+            transition: all 0.3s var(--transition-smooth);
+            border: none;
+            font-size: 1.2rem;
         }
 
         .back-to-top.show {
             opacity: 1;
+            transform: translateY(0);
         }
 
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(42,93,255,0.3);
+        }
+
+        /* 下载链接样式 */
+        a[download] {
+            display: inline-block;
+            color: var(--primary-blue);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-blue);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            margin: 0.5rem 0;
+            font-weight: 500;
+        }
+
+        a[download]:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42,93,255,0.2);
+        }
+
+        /* 复制参数按钮 */
+        .cptxt {
+            display: inline-block;
+            margin: 1rem 0;
+            padding: 0.8rem 1.2rem;
+            background: var(--primary-light);
+            color: var(--primary-blue);
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(42,93,255,0.2);
+            font-weight: 500;
+        }
+
+        .cptxt:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42,93,255,0.2);
+        }
+
+        .cptxt::before {
+            content: "\f0c5";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 0.5rem;
+        }
+
+        /* 响应式设计 */
         @media (max-width: 768px) {
             .nav-links {
                 flex-direction: column;
                 text-align: center;
-                gap: 1rem;
+                gap: 0.8rem;
             }
             
             .section {
                 padding-top: 8rem;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+            }
+
+            .step-container {
+                grid-template-columns: 1fr;
+            }
+
+            .step {
+                padding: 1.5rem;
+            }
+
+            .step img {
+                max-width: 100%;
             }
         }
+
+        /* 图片查看器 */
+        .img-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .img-viewer.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .img-viewer img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s var(--transition-bounce);
+        }
+
+        .img-viewer.active img {
+            transform: scale(1);
+        }
+
+        .img-viewer .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .img-viewer .close:hover {
+            transform: rotate(90deg);
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.add('visible');
+            });
+        });
+    </script>
 </head>
 <body>
     <nav class="nav-bar">
         <div class="nav-links">
-            <a href="#process">表单浏览器初始化</a>
-            <a href="#features">开始监控</a>
-            <a href="#batch-url">批量填写URL</a>
-            <a href="#ad-pages">广告页面操作</a>
-            <a href="#software-download">软件下载</a>
-            <a href="#notes">注意事项</a>
+            <a href="#process"><i class="fas fa-laptop"></i> 表单浏览器初始化</a>
+            <a href="#features"><i class="fas fa-play"></i> 开始监控</a>
+            <a href="#batch-url"><i class="fas fa-link"></i> 批量填写URL</a>
+            <a href="#ad-pages"><i class="fas fa-ad"></i> 广告页面操作</a>
+            <a href="#software-download"><i class="fas fa-download"></i> 软件下载</a>
+            <a href="#notes"><i class="fas fa-exclamation-circle"></i> 注意事项</a>
         </div>
     </nav>
 
@@ -194,192 +564,177 @@
                 <div class="step">
                     <h3>表单浏览器初始化</h3>
                     <p>登录后点击主界面功能入口：填表浏览器登录进入页面</p>
-                    <img src="png/01.png" alt="步骤1" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
+                    <img src="png/01.png" alt="步骤1" class="zoomable">
                 </div>
                 <div class="step">
                     <h3>浏览器配置</h3>
                     <p>转到页面勾选「是否重新打开网页」选项，随后点击启动浏览器按钮</p>
-                    <img src="png/02.png" alt="步骤2" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
+                    <img src="png/02.png" alt="步骤2" class="zoomable">
                 </div>
                 <div class="step">
                     <h3>浏览器启动</h3>
                     <p>等待浏览器启动并加载完毕，界面显示完整浏览器框架</p>
-                    <img src="png/03.png" alt="步骤3" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
+                    <img src="png/03.png" alt="步骤3" class="zoomable">
                 </div>
                 <div class="step">
                     <h3>功能操作</h3>
                     <p>依次点击「获取标签页」→「获取框架」按钮，待执行结果日志输出显示框架获取和网页打开成功后，即可进行登录操作</p>
-                    <img src="png/04.png" alt="步骤4" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
+                    <img src="png/04.png" alt="步骤4" class="zoomable">
 
-                    <p style="color: var(--warning-orange); margin-top: 1rem;">※ 请确保网络连接稳定，页面加载过程请勿进行其他操作</p>
+                    <p style="color: var(--warning-orange); margin-top: 1rem;"><i class="fas fa-info-circle"></i> 请确保网络连接稳定，页面加载过程请勿进行其他操作</p>
                 </div>
             </div>
         </section>
 
         <section id="features" class="section">
             <h2>开始监控</h2>
-            <div class="warning" style="margin-bottom:2rem;">
-                ※ 进行此操作前请一定确保完成表单浏览器初始化指引流程
+            <div class="warning">
+                <p><i class="fas fa-exclamation-triangle"></i> 进行此操作前请一定确保完成表单浏览器初始化指引流程</p>
             </div>
             <div class="step-container">
                 <div class="step">
                     <h3>浏览器主程序启动</h3>
                     <p>首先打开vmlogin指纹浏览器主程序，点击启动按钮初始化环境</p>
-                    <img src="png/01/01.png" alt="步骤1" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="png/01/01.png" alt="步骤1" class="zoomable">
                 </div>
                 <div class="step">
                     <h3>任务界面配置</h3>
                     <p>转到我的任务界面，确保页面处于图示状态并勾选「未完成」选项，点击搜索按钮</p>
-                    <img src="png/01/02.png" alt="步骤2" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="png/01/02.png" alt="步骤2" class="zoomable">
                 </div>
                 <div class="step">
                     <h3>连接拉取操作</h3>
                     <p>返回小助手vm浏览器分类页面，点击「批量拉取连接」按钮获取任务链接</p>
-                    <img src="png/01/03.png" alt="步骤3" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="png/01/03.png" alt="步骤3" class="zoomable">
                 </div>
                 <div class="step">
                     <h3>监控执行流程</h3>
                     <p>任务页面完成ID0-30分配后，点击「开始监控」按钮等待详细信息生成</p>
-                    <img src="png/01/04.png" alt="步骤4" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                    <p style="color:var(--warning-orange); margin-top:1rem;">※ 监控过程请保持网络稳定，勿操作其他界面</p>
+                    <img src="png/01/04.png" alt="步骤4" class="zoomable">
+                    <p style="color:var(--warning-orange); margin-top:1rem;"><i class="fas fa-info-circle"></i> 监控过程请保持网络稳定，勿操作其他界面</p>
                 </div>
             </div>
         </section>
 
         <section id="batch-url" class="section">
-    <h2>批量填写第1页URL</h2>
-    <div class="warning" style="margin-bottom:2rem;">
-        ※ 进行此操作前请一定确保完成开始监控版块的指引流程
-    </div>
-    <div class="step-container">
-        <div class="step">
-            <h3>页面加载检查</h3>
-            <p>等待浏览器页面加载完毕如图所示</p>
-            <img src="png/02/01.png" alt="步骤1" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-        </div>
-        <div class="step">
-            <h3>网址刷新操作</h3>
-            <p>确保页面都处于上一个步骤中配图中的样式点击小助手中的刷新网址，点击完毕后地址栏内容改变</p>
-            <img src="png/02/02.png" alt="步骤2" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-        </div>
-        <div class="step">
-            <h3>异常页面处理</h3>
-            <p>如果出现问题页面如无法加载，勾选问题页面对应的浏览器，序号对应任务栏0-9图标</p>
-            <img src="png/02/03.png" alt="步骤3" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-        </div>
-        <div class="step">
-            <h3>网址分配执行</h3>
-            <p>转到填表工具类页面点击分配第一个获取的网址，在弹出的窗口中直接点击确定，如果没有勾选异常页面则无需进行分配随后点击填表_第①个按钮</p>
-            <img src="png/02/04.png" alt="步骤4" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-        </div>
-        <div class="step">
-            <h3>执行结果</h3>
-            <p>点击填表按钮后会依次进行填写网址操作，并且跳过已勾选的问题页面</p>
-            <img src="png/02/05.png" alt="步骤4" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-            <p style="color:var(--warning-orange); margin-top:1rem;">※ 问题页面自行判断,图示只是举例</p>
-        </div>
-    </div>
-</section>
+            <h2>批量填写第1页URL</h2>
+            <div class="warning">
+                <p><i class="fas fa-exclamation-triangle"></i> 进行此操作前请一定确保完成开始监控版块的指引流程</p>
+            </div>
+            <div class="step-container">
+                <div class="step">
+                    <h3>页面加载检查</h3>
+                    <p>等待浏览器页面加载完毕如图所示</p>
+                    <img src="png/02/01.png" alt="步骤1" class="zoomable">
+                </div>
+                <div class="step">
+                    <h3>网址刷新操作</h3>
+                    <p>确保页面都处于上一个步骤中配图中的样式点击小助手中的刷新网址，点击完毕后地址栏内容改变</p>
+                    <img src="png/02/02.png" alt="步骤2" class="zoomable">
+                </div>
+                <div class="step">
+                    <h3>异常页面处理</h3>
+                    <p>如果出现问题页面如无法加载，勾选问题页面对应的浏览器，序号对应任务栏0-9图标</p>
+                    <img src="png/02/03.png" alt="步骤3" class="zoomable">
+                </div>
+                <div class="step">
+                    <h3>网址分配执行</h3>
+                    <p>转到填表工具类页面点击分配第一个获取的网址，在弹出的窗口中直接点击确定，如果没有勾选异常页面则无需进行分配随后点击填表_第①个按钮</p>
+                    <img src="png/02/04.png" alt="步骤4" class="zoomable">
+                </div>
+                <div class="step">
+                    <h3>执行结果</h3>
+                    <p>点击填表按钮后会依次进行填写网址操作，并且跳过已勾选的问题页面</p>
+                    <img src="png/02/05.png" alt="步骤5" class="zoomable">
+                    <p style="color:var(--warning-orange); margin-top:1rem;"><i class="fas fa-info-circle"></i> 问题页面自行判断,图示只是举例</p>
+                </div>
+            </div>
+        </section>
 
-<section id="ad-pages" class="section">
+        <section id="ad-pages" class="section">
             <h2>批量进入广告页面</h2>
-            <div class="warning" style="margin-bottom:2rem;">
-                ※ 进行此操作前请一定确保完成开始监控版块的指引流程
+            <div class="warning">
+                <p><i class="fas fa-exclamation-triangle"></i> 进行此操作前请一定确保完成开始监控版块的指引流程</p>
             </div>
             <div class="step-container">
                 <div class="step">
                     <h3>首次广告入口</h3>
                     <p>确保浏览器加载完成,并处于此界面</p>
-                    <img src="png/03/01_2.png" alt="首次广告入口" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="png/03/01_2.png" alt="首次广告入口" class="zoomable">
                     <p>点击小助手<b>首次进入广告</b>按钮</p>
-                    <img src="png/03/01.png" alt="首次广告按钮" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="png/03/01.png" alt="首次广告按钮" class="zoomable">
                 </div>
                 <div class="step">
                     <h3>二次广告入口</h3>
                     <p>等待页面加载完成如图所示,程序默认进入<b>蓝色方框</b>内的广告界面：</p>
                     <div class="warning">
-                        <p>蓝色方框: 默认进入的广告页面</p>
-                        <p>红色方框：启用关键词匹配广告</p>
-                        <p>黄色方框：开启多广告页面模式</p>
+                        <p><span style="color:#2a5dff;"><i class="fas fa-square"></i></span> 蓝色方框: 默认进入的广告页面</p>
+                        <p><span style="color:#dc3545;"><i class="fas fa-square"></i></span> 红色方框：启用关键词匹配广告</p>
+                        <p><span style="color:#ffc107;"><i class="fas fa-square"></i></span> 黄色方框：开启多广告页面模式</p>
                     </div>
-                    <img src="png/03/02_1.png" alt="二次广告加载" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="png/03/02_1.png" alt="二次广告加载" class="zoomable">
                     <p>点击<b>二次进入广告</b>按钮</p>
-                    <img src="png/03/02.png" alt="二次广告按钮" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="png/03/02.png" alt="二次广告按钮" class="zoomable">
                 </div>
                 <div class="step">
                     <h3>可选功能配置</h3>
                     <p>程序默认进入<b>蓝色方框</b>内的广告界面：</p>
-                    <img src="png/03/03.png" alt="功能配置说明" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="png/03/03.png" alt="功能配置说明" class="zoomable">
                 </div>
                 <div class="step">
                     <h3>广告页面处理</h3>
                     <p>安装专属浏览器扩展可自动定位文本框：</p>
-                    <img src="png/03/03_1.png" alt="扩展定位" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="png/03/03_1.png" alt="扩展定位" class="zoomable">
                     <p>未安装扩展时可手动切换页面快速查找填写页面：</p>
-                    <img src="png/03/03_2.png" alt="手动查找" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="png/03/03_2.png" alt="手动查找" class="zoomable">
                 </div>
                 <div class="step">
                     <h3>表单完成操作</h3>
                     <p>在填表工具页面点击<b>填表_完成表单</b>按钮：</p>
-                    <img src="png/03/04.png" alt="完成表单" style="max-width: 80%; margin:1rem auto; display:block; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <img src="png/03/04.png" alt="完成表单" class="zoomable">
                     <div class="warning">
-                        <p>系统会自动识别1、2链接填写状态</p>
+                        <p><i class="fas fa-check-circle"></i> 系统会自动识别1、2链接填写状态</p>
                         <p>• 已填写：执行完成操作</p>
                         <p>• 未填写：自动跳过</p>
                     </div>
                 </div>
             </div>
         </section>
+
         <section id="software-download" class="section">
             <h2>下载中心</h2>
             <div class="step-container">
                 <div class="step">
                     <h3>软件下载</h3>
-                    <p>最新版本客户端下载：<a href="download/小助手Ⅱ(2.6).rar" download>点击下载</a></p>
-                    <br>
-                    支持小助手内置指纹创建,批量删除配置文件
-                    <br>
-                    适配官网页面改动
+                    <p>最新版本客户端下载：<a href="download/小助手Ⅱ(2.7)135.zip" download><i class="fas fa-download"></i> 点击下载</a></p>
+                    <div class="warning">
+                        <p><i class="fas fa-info-circle"></i> 更新内容：</p>
+                        <p>• 更新最新IP池</p>
+                        <p>• 强制使用最新内核</p>
+                        <p>• 更新最新页面</p>
+                        <p>• 修复部分BUG</p>
+                        <p>• 新增多广告页面模式</p>
+                        <p>• 新增关键词匹配广告</p>
+                        <p>• 新增广告页面自动识别</p>
+                        <p>• 以下是扩展更新内容</p>
+                        <p>• 新增广告页面自动填写</p>
+                        <p>• 新增广告页面自动提交</p>
+                        <p>• 新增广告页面自动关闭</p>
+                        <p>• 新增广告页面自动刷新</p>
+                        <p>• 新增广告页面自动跳转</p>                        
+                    </div>
                     <div class="warning" style="margin-top:1rem;">
-                        ※ 下载后请解压到非系统盘目录使用
+                        <p><i class="fas fa-exclamation-triangle"></i> 下载后请解压到非系统盘目录使用</p>
                     </div>
                 </div>
                 <div class="step">
                     <h3>扩展下载</h3>
                     <div class="warning">
-                        ※ 安装前请先关闭浏览器
-                        <p>扩展程序下载：<a href="download/auto-fill-extension.rar" download>点击下载</a></p>
-                        <p>扩展程序CRX下载：<a href="download/auto-fill-extension.crx" download>点击下载</a></p>
+                        <p><i class="fas fa-exclamation-triangle"></i> 安装前请先关闭浏览器</p>
+                        <p>扩展程序下载：<a href="FormFillPro\FormFillPro.zip" download><i class="fas fa-download"></i> 点击下载</a></p>
+                        <p><a href="FormFillPro\popup.html" class="cptxt" style="margin-top:1rem;"><i class="fas fa-external-link-alt"></i> 查看扩展展示</a></p>
                     </div>
-                    <a class="cptxt" title="点击复制文字" data-url="--disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-renderer-backgrounding --apppackagename=com.facebook.katana --url-mon=http://m.facebook.com/ http://m.facebook.com/ --load-extension="C:\auto-fill-extension"" href="javascript:void(0)">点击复制参数</a>
-                    <p>解压后放在C盘</p>
+                    <a class="cptxt" title="点击复制文字" data-url="--disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-renderer-backgrounding --apppackagename=com.facebook.katana --url-mon=http://m.facebook.com/ http://m.facebook.com/ --load-extension=\"C:\FormFillPro\"" href="javascript:void(0)">点击复制参数</a>
+                    <p>解压后放在C:\FormFillPro\</p>
                     <p>VMLogin程序>>Ctrl+A全选>>右键>>批量编辑选中配置文件>>自定义启动参数点击勾选填写上方参数>>确认</p>
-                    <img src="png/04/01.png" alt="步骤1" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
-                    <img src="png/04/02.png" alt="步骤2" style="max-width: 80%; margin: 1.5rem auto; display: block; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: zoom-in;">
-
-                </div>
-            </div>
-        </section>
-
-        <section id="notes" class="section">
-            <h2>注意事项</h2>
-            <div class="warning">
-                没有注意的地方
-            </div>
-            <div class="warning">
-                如不熟悉软件,请严格按照流程操作,避免出现不必要的问题
-            </div>
-        </section>
-    </main>
-
-    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-
-    <script>
-        // 返回顶部按钮显示逻辑
-        window.addEventListener('scroll', () => {
-            const btn = document.querySelector('.back-to-top');
-            btn.classList.toggle('show', window.scrollY > 300);
-        });
-    </script>
-</body>
-</html>
+                    <img src="png/04/01.png" alt="步骤1"
